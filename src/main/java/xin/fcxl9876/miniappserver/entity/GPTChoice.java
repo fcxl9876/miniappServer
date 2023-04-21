@@ -9,7 +9,9 @@ import lombok.Data;
 @Data
 public class GPTChoice {
 
-    private String text;
+    private GPTMessage message;
+
+    private String finish_reason;
 
     private Integer index;
 }
