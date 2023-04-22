@@ -1,0 +1,21 @@
+package xin.fcxl9876.common.entity.echart;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+import java.util.List;
+
+/**
+ * @author shaolay
+ * @date 2023/3/13 15:28
+ */
+@Data
+@Accessors(chain = true)
+public class Series {
+
+    private String name;
+
+    private String type;
+
+    private List<String> data;
+}

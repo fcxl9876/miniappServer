@@ -1,0 +1,79 @@
+package xin.fcxl9876.common.entity.basEntity;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * @author shaolay
+ * @date 2023/3/28 14:31
+ */
+@Data
+@Entity
+@Table(name = "t_bas_manhole_cover")
+@NamedQuery(name="Manhole.findAll", query="SELECT b FROM Manhole b")
+public class Manhole implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @Column(name="id")
+    @GeneratedValue(generator = "uuidGenerator")
+    @GenericGenerator(name = "uuidGenerator", strategy = "uuid") // UUID生成策略
+    private String id;
+
+    /**井盖名称**/
+    @Column(name = "cover_name")
+    private String coverName;
+
+    /**井盖编码**/
+    @Column(name = "cover_code")
+    private String coverCode;
+
+    /**区域编码（关联区域信息表）**/
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "area_code", referencedColumnName = "area_code")
+    @NotFound(action = NotFoundAction.IGNORE)
+    private Area area;
+
+    /**经度**/
+    @Column(name = "longitude")
+    private String longitude;
+
+    /**纬度**/
+    @Column(name = "latitude")
+    private String latitude;
+
+    /**站点地址**/
+    @Column(name = "address")
+    private String address;
+
+    /**管网类型**/
+    @Column(name = "pipe_type")
+    private String pipeType;
+
+    /**管网段编码**/
+    @Column(name = "pipe_segment_code")
+    private String pipeSegmentCode;
+
+    /**备注**/
+    @Column(name = "remark")
+    private String remark;
+
+    /**数据更新时间**/
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Column(name = "update_time")
+    private Date updateTime;
+
+    /**逻辑删**/
+    @Column(name = "is_deleted")
+    private String isDeleted;
+}

@@ -1,0 +1,68 @@
+package com.infore.common.entity.basEntity;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * @author shaolay
+ * @date 2023/2/17 8:41
+ */
+@Data
+@Entity
+@Table(name = "t_bas_basin", catalog = "db_water_subject")
+@NamedQuery(name="Basin.findAll", query="SELECT b FROM Basin b")
+public class Basin implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @Column(name="basin_id")
+    @GeneratedValue(generator = "uuidGenerator")
+    @GenericGenerator(name = "uuidGenerator", strategy = "uuid") // UUID生成策略
+    private String basinId;
+
+    /**流域code**/
+    @Column(name = "basin_code")
+    private String basinCode;
+
+    /**流域名称**/
+    @Column(name = "basin_name")
+    private String basinName;
+
+    /**流域备注**/
+    @Column(name = "basin_remark")
+    private String basinRemark;
+
+    /**水质目标等级**/
+    @Column(name = "aim_water_level")
+    private Integer aimWaterLevel;
+
+    /**流域面积**/
+    @Column(name = "basin_area")
+    private String basinArea;
+
+    /**流域密度**/
+    @Column(name = "basin_density")
+    private String basinDensity;
+
+    /**流域形状**/
+    @Column(name = "basin_shape")
+    private String basinShape;
+
+    /**流域高度**/
+    @Column(name = "basin_height")
+    private String basinHeight;
+
+    /**修改时间**/
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Column(name = "update_time")
+    private Date updateTime;
+
+}

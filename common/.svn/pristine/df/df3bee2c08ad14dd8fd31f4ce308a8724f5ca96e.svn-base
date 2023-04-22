@@ -1,0 +1,87 @@
+package com.infore.common.util;
+
+import com.infore.common.constant.Constants;
+import com.infore.common.enums.ResultStatus;
+import com.infore.common.enums.TimeTypeEnum;
+import com.infore.common.exception.CustomException;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Date;
+
+/**
+ * 参数校验工具类
+ *
+ * @author shaolay
+ * @date 2023/2/23 10:45
+ */
+public class ParamCheckUtil {
+
+    /**
+     * 校验参数
+     *
+     * @param params
+     * @throws CustomException
+     */
+    public static void paramCheck(String... params) throws CustomException {
+        for (String param : params) {
+            if (StringUtils.isBlank(param)) {
+                throw new CustomException(ResultStatus.ERROR, Constants.ILLEGAL_PARAM);
+            }
+        }
+    }
+
+    /**
+     * 校验参数
+     *
+     * @param beginTime
+     * @param endTime
+     * @param timeType
+     * @param pageNum
+     * @param pageSize
+     * @throws CustomException
+     */
+    public static void paramCheck(String beginTime, String endTime, TimeTypeEnum timeType, Integer pageNum, Integer pageSize) throws CustomException {
+        if(null  != pageSize|| null !=  pageNum ){
+            paramCheck(pageNum, pageSize);
+        }
+        paramCheck(beginTime, endTime, timeType);
+    }
+
+    /**
+     * 校验参数
+     *
+     * @param pageNum
+     * @param pageSize
+     * @throws CustomException
+     */
+    public static void paramCheck(Integer pageNum, Integer pageSize) throws CustomException {
+        if (pageNum == 0) {
+            throw new CustomException(ResultStatus.ERROR, Constants.ILLEGAL_PARAM);
+        }
+    }
+
+    /**
+     * 校验参数
+     *
+     * @param beginTime
+     * @param endTime
+     * @param timeType
+     * @throws CustomException
+     */
+    public static void paramCheck(String beginTime, String endTime, TimeTypeEnum timeType) throws CustomException {
+        Date beginDate, endDate;
+        //校验时间格式
+        if (timeType.compareTo(TimeTypeEnum.day) == 0) {
+            beginDate = DateUtil.stringToDate(beginTime, DateUtil.DATE_SMALL_STR);
+            endDate = DateUtil.stringToDate(endTime, DateUtil.DATE_SMALL_STR);
+        } else {
+            //默认为小时
+            beginDate = DateUtil.stringToDate(beginTime, DateUtil.DATE_SMALL_YMDHH);
+            endDate = DateUtil.stringToDate(endTime, DateUtil.DATE_SMALL_YMDHH);
+        }
+        if (beginDate == null || endDate == null) {
+            throw new CustomException(ResultStatus.ERROR, Constants.ILLEGAL_PARAM);
+        }
+
+    }
+}

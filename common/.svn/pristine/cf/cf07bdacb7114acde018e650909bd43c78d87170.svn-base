@@ -1,0 +1,79 @@
+package com.infore.common.enums;
+
+public enum WaterQualityLevelEnum {
+
+    ZERO(0, "-"),
+    ONE(1, "I类"),
+    TWO(2, "II类"),
+    THREE(3, "III类"),
+    FOUR(4, "IV类"),
+    FIVE(5, "V类"),
+    VFIVE(6, "劣V类");
+
+    private final Integer code;
+    private final String reason;
+
+    private WaterQualityLevelEnum(Integer statusCode, String reasonPhrase) {
+        this.code = statusCode;
+        this.reason = reasonPhrase;
+    }
+
+    public Integer getStatusCode() {
+        return this.code;
+    }
+
+    public String getReasonPhrase() {
+        return this.reason;
+    }
+
+
+    public static WaterQualityLevelEnum getDesc(String reason) {
+        for (WaterQualityLevelEnum ls : WaterQualityLevelEnum.values()) {
+            if (ls.getReasonPhrase().equals(reason)) {
+                return ls;
+            }
+        }
+        return null;
+    }
+
+    public static WaterQualityLevelEnum getDesc(Integer code) {
+        for (WaterQualityLevelEnum ls : WaterQualityLevelEnum.values()) {
+            if (ls.getStatusCode() == code) {
+                return ls;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 将数字水质等级转换成中文描述
+     *
+     * @param waterQualityLevel
+     * @return 水质等级中文描述
+     */
+    public static String NumToChinese(Integer waterQualityLevel) {
+        String waterQualityLevelStr = "-";
+        WaterQualityLevelEnum waterQualityLevelEnum = getDesc(waterQualityLevel);
+        if (waterQualityLevelEnum != null) {
+            waterQualityLevelStr = waterQualityLevelEnum.getReasonPhrase();
+        }
+        return waterQualityLevelStr;
+    }
+
+    /**
+     * 将水质等级中文描述转换成数字水质等级
+     *
+     * @param waterQualityLevelStr
+     * @return 数字水质等级
+     */
+    public static Integer ChineseToNum(String waterQualityLevelStr) {
+        Integer waterQualityLevel = 0;
+        WaterQualityLevelEnum waterQualityLevelEnum = getDesc(waterQualityLevelStr);
+        if (waterQualityLevelEnum != null) {
+            waterQualityLevel = waterQualityLevelEnum.getStatusCode();
+        }
+        return waterQualityLevel;
+    }
+
+}
+

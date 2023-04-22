@@ -1,0 +1,89 @@
+package com.infore.common.constant;
+
+/**
+ * @ClassName: BusinessConstant
+ * @Description: 系统功能中需要用到的常量
+ * @author 谭红波
+ * @date 2017年9月4日
+ * 
+ */
+public class BusinessConstant {
+    public static final Integer RESULT_OK = 0;
+    public static final Integer RESULT_ERROR = 1;
+
+    public static final String AUTH_SUCCESS = "认证成功";
+    public static final String LOGOUT_SUCCESS = "注销成功";
+    public static final String AUTH_FAILURE_TOKEN = "认证失败，Token无效";
+    public static final String VALID_TOKEN_SUCCESS = "Token验证成功";
+    public static final String AUTH_FAILURE_ADMIN = "认证失败，权限不够";
+    public static final String AUTH_FAILURE_URL = "URL错误";
+    public static final String AUTH_FAILURE_ACCOUNT = "账号或密码错误";
+    public static final Integer LOGIN_EFFECTIVE_TIME = 10; // 账号锁定有效时间为10分钟
+    public static final String AUTH_FAILURE_PASSWORDNO = "密码错误5次，请" + BusinessConstant.LOGIN_EFFECTIVE_TIME + "分钟后再登录";
+    public static final String DATA_INFO_FAILURE = "数据信息错误";
+
+    public static final String QUERY_SUCCESS = "查询成功";
+    public static final String QUERY_FAILURE = "查询失败";
+
+    public static final String INSERT_SUCCESS = "新增成功";
+    public static final String INSERT_FAILURE = "新增失败";
+
+    public static final String DELETE_SUCCESS = "删除成功";
+    public static final String DELETE_FAILURE = "删除失败";
+
+    public static final String UPDATE_SUCCESS = "修改成功";
+    public static final String UPDATE_FAILURE = "修改失败";
+
+    public static final Integer EFFECTIVE_TIME = 20; // 令牌有效时间为20分钟
+
+    public static final String USER_EXIST = "账号已经存在";
+    public static final String USER_NOT_EXIST = "账号不存在";
+    
+    public static final String OLD_PASSWORD_ERROR = "原密码错误";
+
+    public static final String ROLE_EXIST = "角色名称已经存在";
+    public static final String ROLE_NOT_EXIST = "角色不存在";
+    public static final String P_ROLE_NOT_EXIST = "父角色不存在";
+    public static final String USER_ROLE_EXIST = "用户已经存在该角色";
+    public static final String USER_ROLE_NOT_EXIST = "用户不存在该角色";
+
+    public static final String PERMISSION_EXIST = "权限名称已经存在";
+    public static final String PERMISSION_NOT_EXIST = "权限不存在";
+    public static final String P_PERMISSION_NOT_EXIST = "父权限不存在";
+    public static final String PERMISSION_ROLE_EXIST = "角色权限关联已经存在";
+    public static final String PERMISSION_ROLE_NOT_EXIST = "角色权限关联不存在";
+
+    public static final String DATA_ERROR = "数据错误";
+    public static final String PARAM_ERROR = "参数错误";
+
+    public static final String UNKNOWN_ERROR = "未知错误";
+    public static final String ILLEGAL_ACCESS = "非法访问";
+
+    public static final String INFO_ERROR = "信息不一致";
+    public static final String PASSWORD_EMAIL = "密码已发送邮箱";
+
+    public static final String DATABASE_CONNECT_SUCCESS = "数据库连接成功";
+    public static final String DATABASE_CONNECT_FAILURE = "数据库连接失败";
+
+    public static final String DATA_TABLE_EXIST = "表名称已经存在";
+    public static final String DATA_TABLE_NOT_EXIST = "表名称不存在";
+
+    public static final String ORG_EXIST = "部门已经存在";
+    public static final String ORG_NOT_EXIST = "部门不存在";
+
+    public static final String STATION_EXIST = "岗位名称已经存在";
+    public static final String STATION_NOT_EXIST = "岗位不存在";
+
+    public static final String APP_EXIST = "应用系统名称已经存在";
+    public static final String APP_NOT_EXIST = "应用系统不存在";
+    
+    public static final String ERR_CODE = "无效二维码";
+    
+    public static final String AREA_EXIST = "表名称已经存在";
+    public static final String AREA_NOT_EXIST = "地区不存在";
+    
+    public static final String PLATFORM_EXIST = "平台公司名称已经存在";
+    public static final String PLATFORM_NOT_EXIST = "平台公司不存在";
+    
+
+}

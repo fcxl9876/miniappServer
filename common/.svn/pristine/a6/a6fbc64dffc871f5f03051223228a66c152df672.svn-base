@@ -1,0 +1,115 @@
+package com.infore.common.entity.reviewEntity;
+
+import lombok.Data;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * @author shaolay
+ * @date 2023/3/22 16:16
+ */
+@Entity
+@Data
+@Table(name = "t_bas_audit_message_water")
+public class WaterAuditMessage implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @Column(name = "data_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    /**
+     * 原始数据id
+     */
+    @Column(name = "ori_data_id")
+    private String oriDataId;
+
+    /**
+     * 流程实例id
+     */
+    @Column(name = "instance_id")
+    private String instanceId;
+
+    /**
+     * 站点编码（关联站点表）
+     */
+    @Column(name = "station_code")
+    private String stationCode;
+
+    /**
+     * 站点名称
+     */
+    @Column(name = "station_name")
+    private String stationName;
+
+    /**
+     * 因子编码
+     */
+    @Column(name = "project_code")
+    private String projectCode;
+
+    /**
+     * 监测时间
+     */
+    @Column(name = "monitor_time")
+    private Date monitorTime;
+
+    /**
+     * 数据原始值
+     */
+    @Column(name = "data_value")
+    private String dataValue;
+
+    /**
+     * 数据原始状态
+     */
+    @Column(name = "data_state")
+    private String dataState;
+
+    /**
+     * 数据修改后值
+     */
+    @Column(name = "change_data_value")
+    private String changeDataValue;
+
+    /**
+     * 数据修改后状态
+     */
+    @Column(name = "change_data_state")
+    private String changeDataState;
+
+    /**
+     * 审核描述
+     */
+    @Column(name = "auditr_message")
+    private String auditrMessage;
+
+    /**
+     * 审核时间
+     */
+    @Column(name = "audit_monitor_time")
+    private Date auditMonitorTime;
+
+    /**
+     * 审核员
+     */
+    @Column(name = "audit_person")
+    private String auditPerson;
+
+    /**
+     * 审核类型（1：初审；2：复核）
+     */
+    @Column(name = "audit_type")
+    private String auditType;
+
+    /**
+     * 审核操作
+     */
+    @Column(name = "audit_operate")
+    private String auditOperate;
+
+}

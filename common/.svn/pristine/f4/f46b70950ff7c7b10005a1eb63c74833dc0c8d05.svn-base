@@ -1,0 +1,134 @@
+package com.infore.common.entity.reviewEntity;
+
+import lombok.Data;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Objects;
+
+/**
+ * @author shaolay
+ * @date 2023/3/22 15:50
+ */
+@Entity
+@Data
+@Table(name = "t_oth_hour_audit_data_water")
+public class WaterAuditData implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @Column(name = "data_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    /**
+     * 流程实例id
+     */
+    @Column(name = "instance_id")
+    private String instanceId;
+
+    /**
+     * 站点编码（关联站点表）
+     */
+    @Column(name = "station_code")
+    private String stationCode;
+
+    /**
+     * 监测指标编码（关联监测指标表）
+     */
+    @Column(name = "project_code")
+    private String projectCode;
+
+    /**
+     * 监测时间
+     */
+    @Column(name = "monitor_time")
+    private Date monitorTime;
+
+    /**
+     * 数据审核时间
+     */
+    @Column(name = "audit_time")
+    private Date auditTime;
+
+    /**
+     * 原始数据数据值
+     */
+    @Column(name = "ori_data_value")
+    private String oriDataValue;
+
+    /**
+     * 原始数据数据状态
+     */
+    @Column(name = "ori_data_state")
+    private String oriDataState;
+
+    /**
+     * 初审数据值
+     */
+    @Column(name = "first_audit_value")
+    private String firstAuditValue;
+
+    /**
+     * 初审数据状态
+     */
+    @Column(name = "first_data_state")
+    private String firstDataState;
+
+    /**
+     * 复审数据值
+     */
+    @Column(name = "review_data_value")
+    private String reviewDataValue;
+
+    /**
+     * 复审数据状态
+     */
+    @Column(name = "review_data_state")
+    private String reviewDataState;
+
+    /**
+     * 终审数据数值
+     */
+    @Column(name = "final_data_value")
+    private String finalDataValue;
+
+
+    /**
+     * 数据终审状态
+     */
+    @Column(name = "final_data_state")
+    private String finalDataState;
+
+
+    /**
+     * 统计标识，0否1是
+     */
+    @Column(name = "flag")
+    private String flag;
+
+
+    /**
+     * 审核状态(0、待初审；1、待复审；2、待终审；3、终审完成)
+     */
+    @Column(name = "audit_state")
+    private String auditState;
+
+
+    /**
+     * 数据更新时间
+     */
+    @Column(name = "update_time")
+    private Date updateTime;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof WaterAuditData)) return false;
+        WaterAuditData auditData = (WaterAuditData) o;
+        return Objects.equals(getInstanceId(), auditData.getInstanceId()) && Objects.equals(getStationCode(), auditData.getStationCode()) && Objects.equals(getProjectCode(), auditData.getProjectCode()) && Objects.equals(getMonitorTime(), auditData.getMonitorTime());
+    }
+
+}

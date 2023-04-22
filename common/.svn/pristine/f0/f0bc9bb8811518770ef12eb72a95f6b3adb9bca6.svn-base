@@ -1,0 +1,116 @@
+package com.infore.common.entity.vo;
+
+
+
+import com.infore.common.entity.basEntity.AreaLevel;
+
+import java.util.List;
+
+public class AreaTreeVo {
+
+	private String nodeId; //当前节点标识
+    
+    private String pid; //父节点标识
+	
+	private String areaId;
+
+	private String areaCode;
+
+	private AreaLevel areaLevel;
+
+	private String areaName;
+
+	private String parentId;
+
+	private Integer sort;
+	
+	private String remark;
+
+	List<AreaTreeVo> children;
+
+	public AreaTreeVo() {
+		super();
+	}
+
+	public String getAreaId() {
+		return areaId;
+	}
+
+	public void setAreaId(String areaId) {
+		this.areaId = areaId;
+	}
+
+	public String getAreaCode() {
+		return areaCode;
+	}
+
+	public void setAreaCode(String areaCode) {
+		this.areaCode = areaCode;
+	}
+
+	public AreaLevel getAreaLevel() {
+		return areaLevel;
+	}
+
+	public void setAreaLevel(AreaLevel areaLevel) {
+		this.areaLevel = areaLevel;
+	}
+
+	public String getAreaName() {
+		return areaName;
+	}
+
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
+	}
+
+	public String getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+
+	public Integer getSort() {
+		return sort;
+	}
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public List<AreaTreeVo> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<AreaTreeVo> children) {
+		this.children = children;
+	}
+
+	public String getNodeId() {
+		return nodeId;
+	}
+
+	public void setNodeId(String nodeId) {
+		this.nodeId = nodeId;
+	}
+
+	public String getPid() {
+		return pid;
+	}
+
+	public void setPid(String pid) {
+		this.pid = pid;
+	}
+	
+	
+}

@@ -1,0 +1,43 @@
+package xin.fcxl9876.common.constant;
+
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * 数据状态
+ *
+ * @author shaolay
+ * @date 2023/2/21 13:24
+ */
+public class DataStateConstant {
+
+    /**
+     * 站态排序
+     */
+    public static final List<Integer> DATA_STATE_SORT = Arrays.asList(1, 2, 0);
+
+    /**
+     * 水质等级排序
+     */
+    public static final List<Integer> WATER_LEVEL_SORT = Arrays.asList(1, 2, 3, 4, 5, 6, 0);
+
+    /**
+     * 离线
+     */
+    public static final Integer OFF_LINE = 0;
+
+    /**
+     * 正常
+     */
+    public static final Integer NORMAL = 1;
+
+    /**
+     * 超标
+     */
+    public static final Integer EXCESS = 2;
+
+    /**
+     * 超标
+     */
+    public static final Integer UNUSUAL = 3;
+}

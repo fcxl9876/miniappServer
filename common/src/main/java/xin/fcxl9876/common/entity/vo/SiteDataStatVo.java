@@ -1,0 +1,88 @@
+package xin.fcxl9876.common.entity.vo;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+/**
+ * @author shaolay
+ * @date 2023/3/1 13:35
+ */
+@Data
+@Accessors(chain = true)
+public class SiteDataStatVo {
+
+    /**
+     * 联网率
+     */
+    @ApiModelProperty(value = "联网率", required = true)
+    private String networkingRate;
+
+    /**
+     * 有效率
+     */
+    @ApiModelProperty(value = "有效率", required = true)
+    private String effectiveRate;
+
+    /**
+     * 应传数据量
+     */
+    @ApiModelProperty(value = "应传数据量", required = true)
+    private int standardNum;
+
+    /**
+     * 实际数据量
+     */
+    @ApiModelProperty(value = "实际数据量", required = true)
+    private int realNum;
+
+    /**
+     * 已审核数据量
+     */
+    @ApiModelProperty(value = "已审核数据量", required = true)
+    private int approvedNum;
+
+    /**
+     * 未审核数据量
+     */
+    @ApiModelProperty(value = "未审核数据量", required = true)
+    private int unapprovedNum;
+
+    /**
+     * 上一次审核时间
+     */
+    @ApiModelProperty(value = "上一次审核时间", required = true)
+    private String lastApprovedTime;
+
+    /**
+     * 上一次审核数据时间
+     */
+    @ApiModelProperty(value = "上一次审核数据时间", required = true)
+    private String lastApprovedDataTime;
+
+    /**
+     * 报警数量
+     */
+    @ApiModelProperty(value = "报警数量", required = true)
+    private int alarmNum;
+
+    /**
+     * 已处理报警数量
+     */
+    @ApiModelProperty(value = "已处理报警数量", required = true)
+    private int treatedAlarmNum;
+
+    /**
+     * 处理中报警数量
+     */
+    @ApiModelProperty(value = "处理中报警数量", required = true)
+    private int treatingAlarmNum;
+
+    /**
+     * 未处理报警数量
+     */
+    @ApiModelProperty(value = "未处理报警数量", required = true)
+    private int untreatedAlarmNum;
+
+
+}

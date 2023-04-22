@@ -1,0 +1,79 @@
+log4j2:
+  formatMsgNoLookups: true
+
+server:
+  port: 8089
+  servlet:
+    context-path: /Miniapp-Service
+    jsp:
+      init-parameters:
+        development: true
+spring:
+  application:
+    name: MiniappService
+  datasource:
+    #    数据主要来源
+    hikari:
+      type: com.zaxxer.hikari.HikariDataSource
+      master:
+        type: com.zaxxer.hikari.HikariDataSource
+        initialize: true
+        name: master
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://211.149.185.58:3306/apiServerDb?serverTimezone=GMT%2B8&characterEncoding=utf8
+        username: apiServerDb
+        password: PDGnRp8Xzw6inJMj
+        maximum-pool-size: 10
+        minimum-idle: 1
+
+    druid:
+      filters: stat,wall,log4j
+      initialSize: 5
+      logSlowSql: true
+      maxActive: 20
+      maxWait: 60000
+      minEvictableIdleTimeMillis: 300000
+      minIdle: 5
+      testOnBorrow: false
+      testOnReturn: false
+      testWhileIdle: true
+      timeBetweenEvictionRunsMillis: 60000
+      validationQuery: SELECT 1 FROM DUAL
+
+  jackson:
+    serialization:
+      indent-output: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+    show-sql: false
+mybatis-plus:
+  typeEnumsPackage: xin.fcxl9876.enums
+logging:
+  level:
+    xin.fcxl9876: debug
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+    status-page-url: http://${spring.cloud.client.ip-address}:${server.port}${server.servlet.context-path}/swagger-ui.html
+  client:
+    fetch-registry: false
+    enabled: false
+    #注册服务与发现服务的地址
+    service-url:
+      defaultZone: http://admin:123456@10.87.106.63:21000/eureka/
+#请求处理的超时时间
+ribbon:
+  ReadTimeout: 50000
+  #请求连接的超时时间
+  ConnectTimeout: 50000
+ChatGPT:
+  variables:
+    apiKey: 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
+    maxTokens: 1000
+    model: gpt-3.5-turbo
+    temperature: 0.5

@@ -1,0 +1,24 @@
+package xin.fcxl9876.common.entity.primaryKey;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * @author shaolay
+ * @date 2023/3/3 13:21
+ */
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode
+public class YearDataKey implements Serializable {
+
+    private String stationCode;
+
+    private String projectCode;
+
+    private String monitorTime;
+}

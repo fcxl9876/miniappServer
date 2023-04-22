@@ -1,0 +1,46 @@
+package com.infore.common.entity.basEntity;
+
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
+
+/**
+ * @author shaolay
+ * @date 2023/2/20 13:22
+ */
+@Entity
+@Data
+@Table(name = "t_bas_project_quality", catalog = "db_water_subject")
+public class ProjectQuality implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @Column(name = "project_code")
+    private String projectCode;
+
+    @Column(name = "one")
+    private Double one;
+
+    @Column(name = "two")
+    private Double two;
+
+    @Column(name = "three")
+    private Double three;
+
+    @Column(name = "four")
+    private Double four;
+
+    @Column(name = "five")
+    private Double five;
+
+    @Column(name = "proportion")
+    private String proportion;
+
+    @Column(name = "status")
+    private Integer status;
+}

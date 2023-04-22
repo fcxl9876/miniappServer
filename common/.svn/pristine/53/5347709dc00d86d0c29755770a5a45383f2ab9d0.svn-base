@@ -1,0 +1,103 @@
+package com.infore.common.entity.qualityEntity;
+
+import lombok.Data;
+
+import javax.persistence.*;
+import java.io.Serializable;
+
+/**
+ *  质控措施技术要求
+ *
+ * @author shaolay
+ * @date 2023/3/21 10:42
+ */
+@Entity
+@Data
+@Table(name = "t_oth_quality_control_tr")
+public class QualityControlTr  implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private String id;
+
+    /**
+     * 因子编码
+     **/
+    @Column(name = "factor_code")
+    private String factorCode;
+
+    /**
+     * 质控类型
+     **/
+    @Column(name = "quality_type")
+    private String qualityType;
+
+    /**
+     * 误差类型：relative 相对误差， absolute 绝对误差，qualitative 定性分析 无需计算误差
+     **/
+    @Column(name = "error_type")
+    private String errorType;
+
+    /**
+     * 上限
+     **/
+    @Column(name = "upper")
+    private String upper;
+
+    /**
+     * 是否可取上限
+     **/
+    @Column(name = "upper_eq")
+    private Integer upperEq;
+
+    /**
+     * 下限
+     **/
+    @Column(name = "lower")
+    private String lower;
+
+    /**
+     * 是否可取下限
+     **/
+    @Column(name = "lower_eq")
+    private Integer lowerEq;
+
+    /**
+     * 范围描述
+     **/
+    @Column(name = "scope")
+    private String scope;
+
+    /**
+     * 执行标准
+     **/
+    @Column(name = "perform_standard")
+    private String performStandard;
+
+    /**
+     * 上限
+     **/
+    @Column(name = "suit_upper")
+    private String suitUpper;
+
+    /**
+     * 是否可取上限
+     **/
+    @Column(name = "suit_upper_eq")
+    private Integer suitUpperEq;
+
+    /**
+     * 下限
+     **/
+    @Column(name = "suit_lower")
+    private String suitLower;
+
+    /**
+     * 是否可取下限
+     **/
+    @Column(name = "suit_lower_eq")
+    private Integer suitLowerEq;
+}

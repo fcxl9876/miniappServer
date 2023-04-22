@@ -1,0 +1,157 @@
+package ${package.Controller};
+
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import ${package.MybatisPlus}.base.EppPage;
+import ${package.MybatisPlus}.base.Msg;
+import ${package.MybatisPlus}.base.ResultUtil;
+import ${package.MybatisPlus}.base.WrapperHelp;
+#if(${superControllerClassPackage})
+import ${superControllerClassPackage};
+#end
+import ${package.Entity}.${entity};
+import ${package.Entity}.vo.${entity}Vo;
+import ${package.Service}.${table.serviceName};
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
+/**
+ * <p>
+ * $!{table.comment} 前端控制器
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${restControllerStyle})
+@RestController
+#else
+@Controller
+#end
+@Api(value = "${table.comment}前端控制器", tags = "${table.comment}前端控制器")
+@RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
+#if(${kotlin})
+class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
+#else
+#if(${superControllerClass})
+public class ${table.controllerName} extends ${superControllerClass} {
+	#else
+	public class ${table.controllerName} {
+	#end
+	private String prefix = "#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end";
+
+	@Autowired
+	private ${table.serviceName} ${table.serviceName};
+
+	@GetMapping()
+	public String ${table.controllerName}(){
+		return prefix;
+	}
+
+	/**
+	 * 查询${table.comment}列表
+	 * @param ${param}Vo ${table.comment}的vo类
+	 * @return Msg<Object> 结果集
+	 * @author ${author}
+	 * @since ${date}
+	 */
+	@PostMapping("/list")
+	@ResponseBody
+	@ApiOperation(value = "查询${table.comment}列表", notes = "${table.comment}列表查询 ")
+	public Msg<Object> list(${table.entityName}Vo ${param}Vo){
+		//sql查询条件
+		Wrapper<${table.entityName}> wrapper = null ;
+		try {
+			wrapper = (Wrapper<${table.entityName}>) WrapperHelp.addCondition(new EntityWrapper<${table.entityName}>(), ${param}Vo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResultUtil.error(500,e.getMessage());
+		}
+		//查询方法
+		Page<${table.entityName}> eppPage = new EppPage<${table.entityName}>(${table.serviceName},${param}Vo,wrapper);
+		return ResultUtil.successPage(${table.serviceName}.selectPage(eppPage, wrapper));
+	}
+
+	/**
+	 * 查询${table.comment}列表
+	 * @param ${param} ${table.comment}
+	 * @return Msg<Object> 结果集
+	 * @author ${author}
+	 * @since ${date}
+	 */
+	@ResponseBody
+	@ApiOperation(value = "添加${table.comment}", notes = "${table.comment}新增")
+	@RequestMapping(value="/add",method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+	public Msg<Object> add(@RequestBody ${table.entityName} ${param}){
+		Wrapper<${table.entityName}> wrapper = new  EntityWrapper<${table.entityName}>();
+#foreach($key in ${uniqueKey})
+#foreach($field in ${table.fields})
+#if(${field.name} == ${key})
+#set($unique=${field})
+#end
+#end
+		wrapper.eq("$key", ${param}.get${unique.capitalName}()).and();
+#end
+#foreach($field in ${table.fields})
+#if(${field.propertyName} == ${keyPropertyName})
+#set($pk=${field})
+#end
+#end
+
+	#if(${uniqueKey.size()} >= 1)
+	wrapper.eq("1", "1");
+		List<${table.entityName}> entityList = ${table.serviceName}.selectList(wrapper);
+		if(entityList.size()>0) {
+			return ResultUtil.error("重复添加");
+		}
+	#end
+	//插入数据
+		boolean flag = ${table.serviceName}.insert(${param});
+		return ResultUtil.setResult(flag,${param}.get${pk.capitalName}());
+	}
+
+
+	/**
+	  * 更新${table.comment}方法
+	  *
+	  * @param ${param} ${table.comment}
+	  * @return Msg<Object>
+	  * @author ${author}
+	  * @since ${date}
+	  */
+	@ResponseBody
+	@ApiOperation(value = "更新${table.comment}", notes = "${table.comment}更新")
+	@RequestMapping(value = "/edit", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public Msg<Object> edit(@RequestBody ${table.entityName} ${param}) {
+		//插入数据
+		boolean flag = ${table.serviceName}.updateById(${param});
+		return ResultUtil.setResult(flag, ${param}.get${pk.capitalName}());
+	}
+
+	/**
+	 * 删除${table.comment}
+	 *
+	 * @param  ${pk.propertyName}
+	 * @return Msg<Object>
+	 * @author ${author}
+	 * @since ${date}
+	 */
+	@RequestMapping(value = "/del", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	@ApiOperation(value = "删除${table.comment}", notes = "删除${table.comment}")
+	public Msg<Object> del(String ${pk.propertyName}) {
+
+		Map<String, Object> columnMap = new HashMap<String, Object>();
+		columnMap.put("${pk.name}", ${pk.propertyName});
+		boolean flag = ${table.serviceName}.deleteByMap(columnMap);
+		return ResultUtil.setResult(flag);
+	}
+}
+#end

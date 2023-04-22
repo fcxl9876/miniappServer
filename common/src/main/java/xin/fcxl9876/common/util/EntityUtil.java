@@ -1,0 +1,49 @@
+package xin.fcxl9876.common.util;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * 实体转换工具类
+ *
+ * @author shaolay
+ * @date 2023/2/21 14:51
+ */
+public class EntityUtil {
+
+    /**
+     * 实体类转换
+     *
+     * @param clazz 目标实体类
+     * @param obj   源实体
+     * @param <T>
+     * @return
+     */
+    public static <T> T entityConversion(Class<T> clazz, Object obj) {
+        String str = JSONObject.toJSONString(obj);
+        return JSONObject.parseObject(str, clazz);
+    }
+
+    /**
+     * 实体类集合转换
+     *
+     * @param clazz      目标实体类
+     * @param entityList 源实体集合
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> entityListConversion(Class<T> clazz, Collection<?> entityList) {
+        if (entityList == null) {
+            return Collections.emptyList();
+        }
+
+        String dataStr = JSON.toJSONString(entityList);
+        JSONArray jsonArray = JSONArray.parseArray(dataStr);
+        return jsonArray.toJavaList(clazz);
+    }
+}

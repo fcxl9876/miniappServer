@@ -1,0 +1,46 @@
+package com.infore.common.constant;
+
+/**
+ * 工作流常量
+ * @author shaolay
+ * @date 2023/3/8 9:47
+ */
+public class ActivitiConstants {
+
+    public static final String PROC_VAR_SPECIAL_STATUS = "PROC_VAR_SPECIAL_STATUS";//流程特殊状态,如驳回、废弃等
+
+    public static final String REJECT = "reject";//驳回
+
+    public static final String PASS = "pass";//通过
+
+    public static final String HANDOVER = "handover";//通过
+
+    public static final String PROCESS_START_FAILED = "流程开启失败";
+
+    public static final String PROCESS_START_SUCCESS = "流程开启成功";
+
+    public static final String PROCESS_KEY_NOT_FOUND = "找不到对应流程";
+
+    public static final String TARGET_TASK_NOT_FOUND = "找不到驳回目标任务";
+
+    public static final String ASSIGNEE_ERROR_PERMISSION = "审核人权限不足";
+
+    public static final String USER_OPERATION_PASS_CN = "通过";//通过
+
+    public static final String USER_OPERATION_REJECT_CN = "驳回";//驳回
+
+    public static final String USER_OPERATION_SUBMIT_CN = "提交文档";//提交文档
+
+    public static final String USER_OPERATION_ABANDON_CN = "废弃";//废弃
+
+    public static final String USER_OPERATION_TRANSFER_CN = "转办";//转办
+
+    public static final String USER_OPERATION_RESUBMIT_CN = "重新提交";//重新提交
+
+    public static final String USER_OPERATION_END_CN = "结束流程";//结束流程
+
+    public static final String USER_OPERATION_WITHDRAW_CN = "回撤成功";
+
+    public static final String DEAL_SUCCESS = "操作成功";
+
+}

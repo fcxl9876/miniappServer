@@ -1,0 +1,64 @@
+package xin.fcxl9876.common.entity.activitiEntity;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import xin.fcxl9876.common.conf.JpaDto;
+import lombok.Data;
+
+import java.io.Serializable;
+import java.util.Date;
+
+
+@Data
+@JpaDto
+public class FlowTaskInfo implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    //任务id
+    private String id;
+    //流程实例id
+    private String processID;
+    //任务名称
+    private String name;
+    /**
+     * 开始时间
+     **/
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date startTime;
+    /**
+     * 审批时间
+     **/
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date endTime;
+    /**
+     * 用户 assignee
+     **/
+    private String user;
+    /**
+     * assignee
+     **/
+    private String appUser;
+    /**
+     * 结束原因 完成 或者   删除被动完成
+     **/
+    private String deleteReason;
+    /**
+     * 备注
+     **/
+    private String comment;
+    /**
+     * 业务键
+     **/
+    private String businessKey;
+
+    private String taskKey;
+
+    private String taskKeyName;
+
+    /**
+     * 持续时间
+     **/
+    private String duration;
+
+
+}

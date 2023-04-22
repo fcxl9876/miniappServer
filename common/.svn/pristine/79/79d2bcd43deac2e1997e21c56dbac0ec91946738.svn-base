@@ -1,0 +1,153 @@
+package com.infore.common.util;
+
+
+import com.infore.common.constant.Constants;
+import com.infore.common.entity.activitiEntity.FlowTaskInfo;
+import com.infore.common.enums.ResultStatus;
+import com.infore.common.enums.ServiceReturnEnum;
+import com.infore.common.page.ApiPageResponse;
+import org.springframework.data.domain.Page;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+/**
+ * @author 谭红波
+ * @ClassName: ResultEntity
+ * @Description: 结果封装实体类
+ * @date 2017年9月2日 timestamp
+ */
+public class ResultEntity {
+    int code; // 结果代码
+    String message; // 消息提示
+    Object content; // 具体结果内容
+
+    public ResultEntity() {
+
+    }
+
+    public ResultEntity(ResultStatus resultStatus, String message, Object content) {
+        this.code = resultStatus.getStatusCode();
+        this.message = message;
+        this.content = content;
+    }
+
+    public ResultEntity(String code, String msg) {
+        this.code = Integer.parseInt(code);
+        this.message = msg;
+    }
+
+    public ResultEntity(int code, String msg) {
+        this.code = code;
+        this.message = msg;
+    }
+
+    public ResultEntity(ResultStatus resultStatus, String message) {
+        this(resultStatus, message, null);
+    }
+
+    public static ResultEntity setApiPage(ApiPageResponse<FlowTaskInfo> ok) {
+
+        ResultEntity resultEntity = new ResultEntity(ResultStatus.SUCCESS, Constants.QUERY_SUCCESS);
+        resultEntity.setMapValue("pageSize", ok.getPageSize()).setMapValue("currentPage", ok.getCurrPage())
+                .setMapValue("totalRecords", ok.getTotalPage())
+                .setMapValue("dataList", ok.getList());
+
+        return resultEntity;
+    }
+
+    @SuppressWarnings("unchecked")
+    public ResultEntity setMapValue(String key, Object value) {
+        if (this.content == null) {
+            this.content = new HashMap<String, Object>();
+        }
+        assert content instanceof Map;
+        ((Map<String, Object>) this.content).put(key, value);
+        return this;
+    }
+
+    public ResultEntity setInfo(Object info) {
+        return setMapValue("info", info);
+    }
+
+    public ResultEntity setDataList(Object list) {
+        return setMapValue("dataList", list);
+    }
+
+    public ResultEntity setTotalRecords(Integer total) {
+        return setMapValue("total", total);
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Object getContent() {
+        return content;
+    }
+
+    public void setContent(Object content) {
+        this.content = content;
+    }
+
+    public static ResultEntity retSuccessRes(Object t) {
+        ResultEntity res = new ResultEntity(ServiceReturnEnum.SUCCESS.getCode(), ServiceReturnEnum.SUCCESS.getMsg());
+        if (t != null) {
+            res.setContent(t);
+        }
+        return res;
+    }
+
+    public static ResultEntity retSuccessRes(Object t, String message) {
+        ResultEntity res = new ResultEntity(ServiceReturnEnum.SUCCESS.getCode(), message);
+        if (t != null) {
+            res.setContent(t);
+        }
+        return res;
+    }
+
+    public static ResultEntity retSuccessRes() {
+        return new ResultEntity(ServiceReturnEnum.SUCCESS.getCode(), ServiceReturnEnum.SUCCESS.getMsg());
+    }
+
+    public static ResultEntity retDefException() {
+        return new ResultEntity(ServiceReturnEnum.ERROR.getCode(), ServiceReturnEnum.ERROR.getMsg());
+    }
+
+    public static ResultEntity retDefException(String msg) {
+        return new ResultEntity(ServiceReturnEnum.ERROR.getCode(), msg);
+    }
+
+    public static <T> ResultEntity page(Page<T> page) {
+        ResultEntity result = new ResultEntity(ResultStatus.SUCCESS, ResultStatus.SUCCESS.getReasonPhrase());
+        return result.setMapValue("pageSize", page.getSize())
+                .setMapValue("currentPage", page.getNumber())
+                .setMapValue("totalRecords", page.getTotalElements())
+                .setMapValue("totalPages", page.getTotalPages())
+                .setMapValue("dataList", page.getContent());
+    }
+
+    public ResultEntity setPage(com.infore.common.util.Page page) {
+        return setMapValue("pageSize", page.getPageSize()).setMapValue("currentPage", page.getPageNo())
+                .setMapValue("totalRecords", page.getTotalRecords())
+                .setMapValue("dataList", page.getList());
+    }
+    @Override
+    public String toString() {
+        return "ResultEntity [code=" + code + ", message=" + message + ", content=" + content + "]";
+    }
+
+}

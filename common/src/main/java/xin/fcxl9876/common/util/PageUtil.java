@@ -1,0 +1,283 @@
+package xin.fcxl9876.common.util;
+
+import com.google.common.collect.Lists;
+import xin.fcxl9876.common.constant.Constants;
+import xin.fcxl9876.common.entity.basEntity.Station;
+import xin.fcxl9876.common.enums.ResultStatus;
+import xin.fcxl9876.common.enums.TimeTypeEnum;
+import xin.fcxl9876.common.exception.CustomException;
+import xin.fcxl9876.common.page.CriterionRequest;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 分页工具
+ *
+ * @author shaolay
+ * @date 2023/2/23 9:17
+ */
+public class PageUtil {
+
+    /**
+     * 排序分隔符
+     */
+    private static final String ORDER_BY_SEPARATOR = ",";
+
+    public static List<String> getTimeList(String beginTime, String endTime, TimeTypeEnum timeType) throws CustomException {
+        List<String> timeList;
+
+        //通过时间类型获取时间集合
+        if (timeType.compareTo(TimeTypeEnum.day) == 0) {
+            timeList = DateUtil.getTimeList(beginTime, endTime, DateUtil.DATE_SMALL_STR, timeType.getTimeType());
+        } else if (timeType.compareTo(TimeTypeEnum.hour) == 0) {
+            timeList = DateUtil.getTimeList(beginTime, endTime, DateUtil.DATE_SMALL_YMDHH, timeType.getTimeType());
+        } else if (timeType.compareTo(TimeTypeEnum.month) == 0) {
+            timeList = DateUtil.getTimeList(beginTime, endTime, DateUtil.DATE_SMALL_STR, timeType.getTimeType());
+        } else if (timeType.compareTo(TimeTypeEnum.year) == 0) {
+            timeList = DateUtil.getTimeList(beginTime, endTime, timeType);
+        } else {
+            throw new CustomException(ResultStatus.ERROR, Constants.ILLEGAL_PARAM);
+        }
+
+        return timeList;
+    }
+
+    /**
+     * 根据分页添加获取开始时间
+     *
+     * @param pageNum   页数
+     * @param pageSize  分页大小
+     * @param beginTime 开始时间
+     * @param endTime   结束时间
+     * @param timeType  时间类型
+     * @return
+     * @throws CustomException
+     */
+    public static String getStartTimeByPage(Integer pageNum, Integer pageSize, String beginTime, String endTime, TimeTypeEnum timeType) throws CustomException {
+        List<String> timeList = getTimeList(beginTime, endTime, timeType);
+        if (timeList.size() < (pageNum - 1) * pageSize) {
+            throw new CustomException(ResultStatus.ERROR, Constants.ILLEGAL_PARAM);
+        }
+
+        return timeList.get((pageNum - 1) * pageSize);
+    }
+
+    /**
+     * 根据分页添加获取结束时间
+     *
+     * @param pageNum   页数
+     * @param pageSize  分页大小
+     * @param beginTime 开始时间
+     * @param endTime   结束时间
+     * @param timeType  时间类型
+     * @return
+     * @throws CustomException
+     */
+    public static String getEndTimeByPage(Integer pageNum, Integer pageSize, String beginTime, String endTime, TimeTypeEnum timeType) throws CustomException {
+        //通过时间类型获取时间集合
+        List<String> timeList = getTimeList(beginTime, endTime, timeType);
+        if (timeList.size() < (pageNum - 1) * pageSize) {
+            throw new CustomException(ResultStatus.ERROR, Constants.ILLEGAL_PARAM);
+        }
+
+        if (timeList.size() < pageNum * pageSize) {
+            return timeList.get(timeList.size() - 1);
+        }
+
+        return timeList.get(pageNum * pageSize - 1);
+    }
+
+    /**
+     * 根据分页条件获取总数
+     *
+     * @param pageNum   页数
+     * @param pageSize  分页大小
+     * @param beginTime 开始时间
+     * @param endTime   结束时间
+     * @param timeType  时间类型
+     * @return
+     * @throws CustomException
+     */
+    public static Integer getTotalsTimeByPage(Integer pageNum, Integer pageSize, String beginTime, String endTime, TimeTypeEnum timeType) throws CustomException {
+        //通过时间类型获取时间集合
+        List<String> timeList = getTimeList(beginTime, endTime, timeType);
+        return timeList.size();
+    }
+
+    /**
+     * 根据分页条件获取总数、开始时间、结束时间
+     *
+     * @param pageNum
+     * @param pageSize
+     * @param beginTime
+     * @param endTime
+     * @param timeType
+     * @return
+     * @throws CustomException
+     */
+    public static Map<String, Object> getPropertyByPage(Integer pageNum, Integer pageSize, String beginTime, String endTime, TimeTypeEnum timeType) throws CustomException {
+        return new HashMap<String, Object>() {
+            {
+                if (null == pageSize || null == pageNum) {
+                    put("pageNum", pageNum);
+                    put("pageSize", pageSize);
+                    put("startTime", beginTime);
+                    put("endTime", endTime);
+                    put("timeList", getTimeList(beginTime, endTime, timeType));
+                    put("totalRecords", null);
+                } else {
+                    String start = getStartTimeByPage(pageNum, pageSize, beginTime, endTime, timeType);
+                    String end = getEndTimeByPage(pageNum, pageSize, beginTime, endTime, timeType);
+                    put("pageNum", pageNum);
+                    put("pageSize", pageSize);
+                    put("startTime", start);
+                    put("endTime", end);
+                    put("timeList", getTimeList(start, end, timeType));
+                    put("totalRecords", getTotalsTimeByPage(pageNum, pageSize, beginTime, endTime, timeType));
+                }
+
+            }
+        };
+    }
+
+    /**
+     * 根据分页条件获取总数、开始时间、结束时间
+     *
+     * @param pageNum
+     * @param pageSize
+     * @return
+     * @throws CustomException
+     */
+    public static Map<String, Object> getPropertyByPage(Integer pageNum, Integer pageSize, List<String> stationCodes) throws CustomException {
+        return new HashMap<String, Object>() {
+            {
+                put("pageNum", pageNum);
+                put("pageSize", pageSize);
+
+                List<String> stationCodeList = null;
+                try {
+                    stationCodeList = Lists.partition(stationCodes, pageSize).get(pageNum - 1);
+                } catch (Exception e) {
+                    throw new CustomException(ResultStatus.ERROR, Constants.ILLEGAL_PARAM);
+                }
+
+                put("stationCodes", StringUtils.join(stationCodeList, ","));
+                put("totalRecords", stationCodes.size());
+            }
+        };
+    }
+
+
+    public static <T> Page<T> inventedObjectPage(List<T> list, PageObject pageObject) {
+        Page<T> page = new Page<>();
+        List<T> listRows = new ArrayList<T>();
+        int pageNumber = pageObject.getPageNumber();
+        int pageSize = pageObject.getPageSize();
+        int totalRecords = list.size();
+        page.setPageNo(pageNumber);
+        page.setPageSize(pageSize);
+        int start = (int) ((pageNumber - 1) * pageSize);
+        int end = (int) (pageNumber * pageSize);
+        // 虚拟分页
+        for (int i = start; i < end; i++) {
+            // 如果i大于listALL的长度，则跳出循环
+            if (i > (totalRecords - 1)) {
+                break;
+            }
+            listRows.add(list.get(i));
+        }
+
+        // 计算总页数
+        int pageCount = (totalRecords / pageSize) + 1;
+        if (totalRecords % pageObject.getPageSize() != 0) {
+            pageCount++;
+        }
+        page.setTotalRecords(totalRecords);
+        page.setTotalPages(pageCount);
+        page.setList(listRows);
+        return page;
+    }
+
+
+    public static <T> Page<T> pageConvert(org.springframework.data.domain.Page<T> dataPage) {
+        Page<T> page = new Page<T>();
+        page.setPageNo(dataPage.getNumber() + 1);
+        page.setPageSize(dataPage.getSize());
+        page.setTotalRecords((int)dataPage.getTotalElements());
+        page.setList(dataPage.getContent());
+        return page;
+    }
+
+    /**
+     * 假分页
+     */
+    public static <T> Page<T> PageCut(List<T> list, Integer pageNo, Integer pageSize){
+        Page<T> page = new Page<T>();
+        page.setPageNo(pageNo);
+        page.setPageSize(pageSize);
+        int totalPages = 0;
+        int totalRecords = 0;
+        if(list !=null && list.size()>0) {
+            totalPages = (int) Math.ceil((list.size()*1.0/pageSize));
+            totalRecords = list.size();
+            if(list.size()>pageNo*pageSize) {
+                page.setList(list.subList((pageNo-1)*pageSize, pageNo*pageSize));
+            }else {
+                page.setList(list.subList((pageNo-1)*pageSize, list.size()));
+            }
+        }else{
+            page.setList(new ArrayList<T>());
+        }
+        page.setTotalPages(totalPages);
+        page.setTotalRecords(totalRecords);
+        return page;
+    }
+
+//    public static String buildOrderTo(CriterionRequest request, Class<?> entityClass) {
+//        String sidx = request.getSidx();
+//        String order = request.getOrder();
+//
+//        if (StringUtils.isBlank(sidx) || StringUtils.isBlank(order)) {
+//            return null;
+//        }
+//        String[] indexes = sidx.split(ORDER_BY_SEPARATOR);
+//        String[] orders = order.split(ORDER_BY_SEPARATOR);
+//        if (indexes.length != orders.length) {
+//            return null;
+//        }
+//        StringBuilder sb = new StringBuilder();
+//
+//        for (int i = 0; i < indexes.length; i++) {
+//            Map<String, EntityColumn> map = EntityHelper.getEntityTable(entityClass).getPropertyMap();
+//            sb.append(map.get(indexes[i].trim()).getColumn()).append(" ").append(orders[i].trim().toUpperCase()).append(",");
+//        }
+//        sb.setLength(sb.length() - 1);
+//        return sb.toString();
+//    }
+
+    /**
+     * controller构建查询请求
+     * @param request
+     * @return
+     */
+    public static PageRequest buildPageRequest(CriterionRequest request) {
+        if(!request.validated()){
+            return PageRequest.of(request.getPage(), request.getLimit());
+        }
+        String[] sorts = request.sorts();
+        String[] orders = request.orders();
+        List<Sort.Order> sortOrders = new ArrayList<>();
+        for (int i = 0; i < sorts.length; i++) {
+            sortOrders.add(new Sort.Order(Sort.Direction.fromString(orders[i]), sorts[i]));
+        }
+        Sort sort = Sort.by(sortOrders);
+        return PageRequest.of(request.getPage(), request.getLimit(), sort);
+    }
+
+}

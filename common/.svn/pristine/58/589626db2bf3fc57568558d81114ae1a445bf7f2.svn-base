@@ -1,0 +1,312 @@
+package com.infore.common.util;
+
+import com.infore.common.constant.DataStateConstant;
+import com.infore.common.entity.basEntity.Project;
+import com.infore.common.entity.basEntity.ProjectRating;
+import com.infore.common.entity.basEntity.Station;
+import com.infore.common.entity.dto.StationInfoDto;
+import com.infore.common.entity.midEntity.StationAndProject;
+import com.infore.common.entity.vo.DataVo;
+import com.infore.common.enums.TimeTypeEnum;
+import com.infore.common.enums.WaterQualityLevelEnum;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * 水质等级计算工具
+ *
+ * @author shaolay
+ * @date 2023/2/20 13:51
+ */
+@Slf4j
+public class WaterQualityUtil {
+
+    private static List<ProjectRating> projectRatingList;
+
+    private static Map<String, List<ProjectRating>> projectRatingMap;
+
+    private static final class InstanceHolder {
+        static final WaterQualityUtil instance = new WaterQualityUtil();
+    }
+
+    public static WaterQualityUtil getInstance() {
+        return InstanceHolder.instance;
+    }
+
+    public List<ProjectRating> getProjectRatingList() {
+        return projectRatingList;
+    }
+
+    public void setProjectRatingList(List<ProjectRating> projectRatingList) {
+        this.projectRatingList = projectRatingList;
+        this.projectRatingMap = this.projectRatingList.stream().collect(Collectors.groupingBy(ProjectRating::getProjectCode));
+    }
+
+    /**
+     * 计算数据集合中的水质等级、主要污染物
+     *
+     * @param dataList
+     * @param timeType 数据类型
+     */
+    public static void setWaterQuality(List<StationInfoDto> dataList, TimeTypeEnum timeType) {
+        Iterator<StationInfoDto> iterator = dataList.iterator();
+
+        while (iterator.hasNext()) {
+            StationInfoDto stationInfoDto = iterator.next();
+
+            //站点信息
+            Station station = stationInfoDto.getStation();
+
+            //对数据进行处理
+            Map<String, DataVo> dataMap = stationInfoDto.getDataMap();
+
+            List<String> mainPollutant = new ArrayList<>();
+            Integer waterQualityNum = 0;
+            Integer stationState = DataStateConstant.OFF_LINE;
+
+            Date latestTime = DateUtil.getSystemTime(DateUtil.DATE_SMALL_YMDHMS);
+            if (dataMap != null && !dataMap.isEmpty()){
+                latestTime = stationInfoDto.getDataTime() == null ?
+                        Collections.max(dataMap.values().stream().map(DataVo::getMonitorTime).collect(Collectors.toList())) : stationInfoDto.getDataTime();
+            }else {
+                dataMap = new HashMap<>();
+                stationInfoDto.setDataMap(dataMap);
+            }
+
+            //对站点关联因子进行遍历
+            for (StationAndProject stationAndProject : station.getStationAndProjects()) {
+                //获取因子对应数据
+                Project project = ProjectUtil.getInstance().getProjectByCode(stationAndProject.getProjectCode());
+                DataVo dataVo = null;
+
+                dataVo = dataMap.get(project.getProjectCode());
+
+                //在实时数据和历史数据中，无数据展示不一样
+                if (dataVo == null){
+                    dataVo = new DataVo();
+                    if (TimeTypeEnum.realTime.compareTo(timeType) > 0){
+                        if (judgeCycle(stationAndProject, stationInfoDto.getDataTime())){
+                            dataVo.setProjectState(DataStateConstant.OFF_LINE);
+                            dataVo.setDataValueAvg("--");
+                            dataVo.setProject(project);
+                            dataVo.setProjectCode(project.getProjectCode());
+                            dataMap.put(project.getProjectCode(), dataVo);
+                            continue;
+                        }else {
+                            dataVo.setProjectState(DataStateConstant.OFF_LINE);
+                            dataVo.setProject(project);
+                            dataVo.setProjectCode(project.getProjectCode());
+                            dataMap.put(project.getProjectCode(), dataVo);
+                            continue;
+                        }
+                    } else {
+                        //没有数据则单因子离线
+                        dataVo.setProjectState(DataStateConstant.OFF_LINE);
+                        dataVo.setDataValueAvg("--");
+                        dataVo.setProject(project);
+                        dataVo.setProjectCode(project.getProjectCode());
+                        dataMap.put(project.getProjectCode(), dataVo);
+                        continue;
+                    }
+                }
+
+
+                //数据vo类中存储因子信息
+                dataVo.setProject(project);
+
+                //计算因子水质等级
+                Integer projectLevel = calWaterQualityNum(dataVo.getProjectCode(), dataVo.getDataValueAvg());
+
+                //设置单因子水质等级
+                dataVo.setWaterQualityNum(projectLevel);
+                dataVo.setWaterQuality(WaterQualityLevelEnum.NumToChinese(projectLevel));
+
+                //判断单因子是否超标
+                if (projectLevel > station.getTargetLevel()) {
+                    mainPollutant.add(project.getProjectName());
+                    dataVo.setProjectState(DataStateConstant.EXCESS);
+                } else {
+                    dataVo.setProjectState(DataStateConstant.NORMAL);
+                }
+                //判断单因子是否异常
+                if (DataIdentUtil.getInstance().judgeDataStatus(dataVo.getDataState())) {
+                    dataVo.setProjectState(DataStateConstant.UNUSUAL);
+                }
+                //判断站点的水质等级，取最大单因子水质等级
+                waterQualityNum = projectLevel > waterQualityNum ? projectLevel : waterQualityNum;
+                //当全部因子都离线时，站点离线
+                stationState = stationState > dataVo.getProjectState() ? stationState : dataVo.getProjectState();
+            }
+
+            //判断站点是否超标
+            if (waterQualityNum > station.getTargetLevel()) {
+                stationInfoDto.setStationState(DataStateConstant.EXCESS);
+                stationInfoDto.setPrimaryPollutant(StringUtils.join(mainPollutant, ","));
+            } else {
+                stationInfoDto.setStationState(stationState);
+            }
+
+            //当因子时间为空时取当前整点时间
+            if (stationInfoDto.getDataTime() == null){
+                stationInfoDto.setDataTime(latestTime);
+            }
+
+            //水质等级
+            stationInfoDto.setWaterQualityNum(waterQualityNum);
+            stationInfoDto.setWaterQuality(WaterQualityLevelEnum.NumToChinese(waterQualityNum));
+        }
+
+        if (TimeTypeEnum.realTime.compareTo(timeType) == 0){
+            //实时数据需要排序
+            //结果排序按站点排序字段排序，再按站点状态排序，再按水质等级排序
+            stationSort(dataList);
+        }
+
+
+    }
+
+    /**
+     * 结果排序按站点排序字段排序，再按站点状态排序，再按水质等级排序
+     * @param dataList 结果
+     */
+    private static void stationSort(List<StationInfoDto> dataList) {
+        //1.按站点排序字段排序
+        Collections.sort(dataList, new Comparator<StationInfoDto>() {
+            @Override
+            public int compare(StationInfoDto o1, StationInfoDto o2) {
+
+                Integer sortNum1 = o1.getStation().getSortNum();
+                Integer sortNum2 = o2.getStation().getSortNum();
+
+                return sortNum1 - sortNum2;
+            }
+        });
+
+        //2.按站点状态排序
+        Collections.sort(dataList, new Comparator<StationInfoDto>() {
+            @Override
+            public int compare(StationInfoDto o1, StationInfoDto o2) {
+
+                Integer sortNum1 = DataStateConstant.DATA_STATE_SORT.indexOf(o1.getStationState());
+                Integer sortNum2 = DataStateConstant.DATA_STATE_SORT.indexOf(o2.getStationState());
+
+                return sortNum1 - sortNum2;
+            }
+        });
+
+        //3.按水质等级排序
+        Collections.sort(dataList, new Comparator<StationInfoDto>() {
+            @Override
+            public int compare(StationInfoDto o1, StationInfoDto o2) {
+
+                Integer sortNum1 = DataStateConstant.WATER_LEVEL_SORT.indexOf(o1.getWaterQualityNum());
+                Integer sortNum2 = DataStateConstant.WATER_LEVEL_SORT.indexOf(o2.getWaterQualityNum());
+
+                return sortNum1 - sortNum2;
+            }
+        });
+
+    }
+
+    /**
+     * 计算水质等级
+     *
+     * @param project 因子编码
+     * @param value   数值
+     * @return 水质等级
+     */
+    public static Integer calWaterQualityNum(String project, String value) {
+        Integer waterQualityNum = 0;
+
+        if (StringUtils.isBlank(project) || StringUtils.isBlank(value) || "--".equals(value)){
+            return waterQualityNum;
+        }
+
+        try {
+            //获取对应因子的水质等级标准
+            List<ProjectRating> projectRatings = projectRatingMap.get(project);
+
+            if (projectRatings != null) {
+                for (ProjectRating projectRating : projectRatings) {
+                    //判断数值是否在给定条件范围内
+                    if (judgeRange(value, projectRating)) {
+                        waterQualityNum = projectRating.getWaterLevelNum() > waterQualityNum ? projectRating.getWaterLevelNum() : waterQualityNum;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("计算水质等级", e);
+        }
+
+        return waterQualityNum;
+    }
+
+    /**
+     * 判断数值是否在给定条件范围内
+     *
+     * @param value         数值
+     * @param projectRating 条件范围（有最大、最小值以及是否能取最大最小值）
+     * @return true 在给定条件范围内
+     */
+    private static boolean judgeRange(String value, ProjectRating projectRating) {
+
+        BigDecimal valueBig = new BigDecimal(value);
+        BigDecimal upperBig = new BigDecimal(projectRating.getUpperLimit());
+        BigDecimal lowerBig = new BigDecimal(projectRating.getLowerLimit());
+
+        //大于上限
+        if (valueBig.compareTo(upperBig) == 1) {
+            return false;
+        }
+
+        //小于下限
+        if (valueBig.compareTo(lowerBig) == -1) {
+            return false;
+        }
+
+        //边界值的问题
+        //等于上限且条件为不包含时
+        if (valueBig.compareTo(upperBig) == 0 && projectRating.getUpperEqual() != 1) {
+            return false;
+        }
+        //等于下限且条件为不包含时
+        if (valueBig.compareTo(lowerBig) == 0 && projectRating.getLowerEqual() != 1) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+
+    /**
+     * 判断数值是否在对应上传周期上
+     *
+     * @param stationAndProject 站点因子关联关系，里面包含该站点因子的上传频率
+     * @param dateTime        数据时间
+     * @return true 在周期内
+     */
+    private static boolean judgeCycle(StationAndProject stationAndProject, Date dateTime) {
+        String monitorFrequencyStr = stationAndProject.getMonitorFrequency();
+        Integer monitorFrequency = 24;
+
+        try {
+            monitorFrequency = Integer.valueOf(monitorFrequencyStr);
+        } catch (Exception e){
+            log.error(stationAndProject.getStationCode() + "站点:" + stationAndProject.getProjectCode() + "因子未设置因子频率或不规范，已采用默认值:24(一小时一条)！");
+        }
+        //根据因子频率将对应天划分成集合
+        List<Date> dates = DateUtil.divideDayByMonitorFrequency(monitorFrequency, new Date());
+
+        if (dates.contains(dateTime)){
+            return true;
+        }
+
+        return false;
+    }
+
+}

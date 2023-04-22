@@ -1,0 +1,45 @@
+/**   
+ * Copyright (C), 2018, yfhj
+ * @Title: CookieUtil.java 
+ * @Package xin.fcxl9876.rmmsbusiness.util
+ * @Description: 获取当前操作用户信息
+ * @author zhoumx   
+ * @date 2018年4月10日 上午11:21:08 
+ * @version V1.00   
+ */
+package xin.fcxl9876.common.util;
+
+import org.apache.commons.lang.StringUtils;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * @ClassName: CookiesUtil
+ * @Description: 获取当前操作用户信息
+ * @author cys
+ * @date 2019年4月10日 上午11:21:08
+ * 
+ */
+public class CookiesUtil {
+    public static String getCookieValue(HttpServletRequest request, String abbr) {
+        String token = null;
+        Cookie[] cs = request.getCookies();
+        if (cs != null) {
+            for (int i = 0; i < cs.length; i++) {
+                if (cs[i].getName().equals(abbr)) {
+                    token = cs[i].getValue();
+                    break;
+                }
+            }
+        }
+
+        if (StringUtils.isBlank(token)) {
+            token = request.getParameter(abbr);
+        }
+        if (StringUtils.isBlank(token)) {
+            token = request.getHeader(abbr);
+        }
+        return token;
+    }
+}

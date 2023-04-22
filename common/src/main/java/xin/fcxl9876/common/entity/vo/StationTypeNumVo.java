@@ -1,0 +1,59 @@
+package xin.fcxl9876.common.entity.vo;
+
+import lombok.Data;
+
+/**
+ * 水站点类型数量统计
+ * @author ??
+ * @date 2023/3/2 14:15
+ */
+@Data
+public class StationTypeNumVo {
+
+    /**
+     * 饮用水源地
+     */
+    public Integer w001;
+
+    /**
+     * 水质监测站
+     */
+    private Integer w002;
+
+    /**
+     * 水情站
+     */
+    private Integer w003;
+
+    /**
+     * 污水站
+     */
+    private Integer w004;
+
+    /**
+     * 视频站
+     */
+    private Integer w005;
+
+
+    public void doNum(String stationType, Integer size){
+        if("W_001".equals(stationType)){
+            this.w001 = size;
+        }
+        else if ("W_002".equals(stationType)){
+            this.w002 = size;
+        }
+        else if ("W_003".equals(stationType)) {
+            this.w003 = size;
+        }
+        else if ("W_004".equals(stationType)) {
+            this.w004 = size;
+        }
+        else if ("W_005".equals(stationType)) {
+            this.w005 = size;
+        }
+
+    }
+
+
+}

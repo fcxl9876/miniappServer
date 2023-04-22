@@ -1,0 +1,60 @@
+package xin.fcxl9876.common.enums;
+
+/**
+ * @Author: xierui
+ * @Date: 2023-02-09 19:15
+ * @Desc:
+ */
+public enum OCECProjectEnum {
+    OCTOT("a34010", "OC", "OC(TOT)", "OC ugC/m^3 (Thermal/Optical)"),
+    ECTOT("a34009", "EC", "EC(TOT)", "EC ugC/m^3 (Thermal/Optical)"),
+    OC("a34011", "OC(光学OC)", "OC(光学OC)", "OC by diff ugC (TC-OptEC)"),
+    EC("a34012", "EC(光学EC)", "EC(光学EC)", "OptEC ugC/m^3"),
+    TC("a34013", "TC", "TC", "TC ugC/m^3");
+
+    private final String projectCode;
+    private final String projectChemical;
+    private final String projectName;
+    private final String projectAlias;
+
+    OCECProjectEnum(String projectCode, String projectChemical, String projectName, String projectAlias) {
+        this.projectCode = projectCode;
+        this.projectChemical = projectChemical;
+        this.projectName = projectName;
+        this.projectAlias = projectAlias;
+    }
+
+    public String getProjectCode() {
+        return projectCode;
+    }
+
+    public String getProjectChemical() {
+        return projectChemical;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public String getProjectAlias() {
+        return projectAlias;
+    }
+
+    public static String getProjectCode(String projectAlias) {
+        for (OCECProjectEnum qp : OCECProjectEnum.values()) {
+            if (qp.getProjectAlias().equalsIgnoreCase(projectAlias)) {
+                return qp.getProjectCode();
+            }
+        }
+        return projectAlias;
+    }
+
+    public static String getProjectChemical(String projectAlias) {
+        for (OCECProjectEnum qp : OCECProjectEnum.values()) {
+            if (qp.getProjectAlias().equalsIgnoreCase(projectAlias)) {
+                return qp.getProjectChemical();
+            }
+        }
+        return projectAlias;
+    }
+}

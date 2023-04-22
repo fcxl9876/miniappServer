@@ -1,0 +1,152 @@
+package com.infore.common.util;
+
+import cn.hutool.core.util.ObjectUtil;
+import com.infore.common.constant.Constants;
+import com.infore.common.enums.ResultStatus;
+import com.infore.common.enums.TimeTypeEnum;
+import com.infore.common.exception.CustomException;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Calendar;
+import java.util.Date;
+
+/**
+ * 参数校验工具类
+ *
+ * @author shaolay
+ * @date 2023/2/23 10:45
+ */
+public class ParamCheckUtil {
+
+    /**
+     * 校验参数
+     *
+     * @param params
+     * @throws CustomException
+     */
+    public static void paramCheck(String... params) throws CustomException {
+        for (String param : params) {
+            if (StringUtils.isBlank(param)) {
+                throw new CustomException(ResultStatus.ERROR, Constants.ILLEGAL_PARAM);
+            }
+        }
+    }
+
+    /**
+     * 校验参数
+     *
+     * @param beginTime
+     * @param endTime
+     * @param timeType
+     * @param pageNum
+     * @param pageSize
+     * @throws CustomException
+     */
+    public static void paramCheck(String beginTime, String endTime, TimeTypeEnum timeType, Integer pageNum, Integer pageSize) throws CustomException {
+        if(null  != pageSize|| null !=  pageNum ){
+            paramCheck(pageNum, pageSize);
+        }
+        paramCheck(beginTime, endTime, timeType);
+    }
+
+    /**
+     * 校验参数
+     *
+     * @param pageNum
+     * @param pageSize
+     * @throws CustomException
+     */
+    public static void paramCheck(Integer pageNum, Integer pageSize) throws CustomException {
+        if (pageNum == 0) {
+            throw new CustomException(ResultStatus.ERROR, Constants.ILLEGAL_PARAM);
+        }
+    }
+
+    public static void paramCheck(String time, TimeTypeEnum timeType){
+        Date date = null;
+
+        switch (timeType) {
+            case hour:
+                date = DateUtil.stringToDate(time, DateUtil.DATE_FULL_STR);
+                break;
+            case day:
+                date = DateUtil.stringToDate(time, DateUtil.DATE_SMALL_STR);
+                break;
+            case week:
+                date = DateUtil.stringToDate(time, DateUtil.DATE_SMALL_STR);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setFirstDayOfWeek(Calendar.MONDAY);
+                calendar.setTime(date);
+                if (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY){
+                    throw new CustomException(ResultStatus.ERROR, Constants.WEEK_PARAM_ILLEGAL);
+                }
+                break;
+            case month:
+            case quarter:
+                date = DateUtil.stringToDate(time, DateUtil.DATE_SMALL_STR);
+                if (ObjectUtil.isNull(date)){
+                    date = DateUtil.stringToDate(time, DateUtil.DATE_SMALL_YM);
+                }
+                break;
+            case year:
+                date = DateUtil.stringToDate(time, DateUtil.DATE_SMALL_Y);
+                break;
+        }
+
+        if (ObjectUtil.isNull(date)){
+            throw new CustomException(ResultStatus.ERROR, Constants.ILLEGAL_PARAM);
+        }
+
+
+
+    }
+
+    /**
+     * 校验参数
+     *
+     * @param beginTime
+     * @param endTime
+     * @param timeType
+     * @throws CustomException
+     */
+    public static void paramCheck(String beginTime, String endTime, TimeTypeEnum timeType) throws CustomException {
+        Date beginDate, endDate;
+        //校验时间格式
+        if (timeType.compareTo(TimeTypeEnum.day) == 0) {
+            beginDate = DateUtil.stringToDate(beginTime, DateUtil.DATE_SMALL_STR);
+            endDate = DateUtil.stringToDate(endTime, DateUtil.DATE_SMALL_STR);
+        } else if (timeType.compareTo(TimeTypeEnum.week) == 0) {
+            beginDate = DateUtil.stringToDate(beginTime, DateUtil.DATE_SMALL_STR);
+            endDate = DateUtil.stringToDate(endTime, DateUtil.DATE_SMALL_STR);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setFirstDayOfWeek(Calendar.MONDAY);
+            calendar.setTime(beginDate);
+            if (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY){
+                throw new CustomException(ResultStatus.ERROR, Constants.WEEK_PARAM_ILLEGAL);
+            }
+            calendar.setTime(endDate);
+            if (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY){
+                throw new CustomException(ResultStatus.ERROR, Constants.WEEK_PARAM_ILLEGAL);
+            }
+
+        } else if (timeType.compareTo(TimeTypeEnum.month) == 0) {
+            beginDate = DateUtil.stringToDate(beginTime, DateUtil.DATE_SMALL_YM);
+            endDate = DateUtil.stringToDate(endTime, DateUtil.DATE_SMALL_YM);
+        } else if (timeType.compareTo(TimeTypeEnum.year) == 0) {
+            beginDate = DateUtil.stringToDate(beginTime, DateUtil.DATE_SMALL_Y);
+            endDate = DateUtil.stringToDate(endTime, DateUtil.DATE_SMALL_Y);
+        }  else if (timeType.compareTo(TimeTypeEnum.quarter) == 0) {
+            beginDate = DateUtil.stringToDate(beginTime, DateUtil.DATE_SMALL_Y);
+            endDate = DateUtil.stringToDate(endTime, DateUtil.DATE_SMALL_Y);
+        } else {
+            //默认为小时
+            beginDate = DateUtil.stringToDate(beginTime, DateUtil.DATE_SMALL_STR);
+            endDate = DateUtil.stringToDate(endTime, DateUtil.DATE_SMALL_STR);
+        }
+        if (beginDate == null || endDate == null) {
+            throw new CustomException(ResultStatus.ERROR, Constants.ILLEGAL_PARAM);
+        }
+
+    }
+}

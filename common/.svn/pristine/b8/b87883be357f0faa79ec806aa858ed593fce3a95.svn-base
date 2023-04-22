@@ -1,0 +1,33 @@
+package com.infore.common.enums;
+
+public enum ResultStatus {
+    SUCCESS(0, "SUCCESS"),                  //操作成功
+    ERROR(1, "ERROR"),                      //操作失败
+    ERROR_TOKEN(2, "ERROR_TOKEN"),          //这是示例，表示token错误，大部分请求直接返回0和1即可，如要添加其他类型请统一协商
+    
+    OK(200, "OK"),                          //请求成功
+    BAD_REQUEST(400, "Bad Request"),        //请求无效
+    UNAUTHORIZED(401, "Unauthorized"),      //未授权
+    FORBIDDEN(403, "Forbidden"),            //禁止访问
+    NOT_FOUND(404, "Not Found"),            //访问地址不存在
+    METHOD_NOT_ALLOWED(405, "Method Not Allowed"),      //服务
+    INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
+
+    FEGIN_SERVER_NOT_FOUND(604, "fegin server not found");
+
+    private final int code;
+    private final String reason;
+
+    private ResultStatus(int statusCode, String reasonPhrase) {
+        this.code = statusCode;
+        this.reason = reasonPhrase;
+    }
+
+    public int getStatusCode() {
+        return this.code;
+    }
+
+    public String getReasonPhrase() {
+        return this.reason;
+    }
+}

@@ -1,0 +1,18 @@
+package ${package.Entity}.vo;
+
+import ${package.Entity}.${entity};
+
+/**
+ * <p>
+ * $!{table.comment}Vo
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+public class ${entity}Vo extends ${entity}{
+
+    private static final long serialVersionUID = 1L;
+
+}
+
